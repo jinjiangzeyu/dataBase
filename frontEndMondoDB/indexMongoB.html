@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jsBase/vue.js"></script>
+    <script src="jsBase/axios.min.js"></script>
+    <style>
+        #app{
+            position: relative;
+        }
+        .change{
+            position: absolute;
+            left: 300px;top: 40px;
+        }
+        .add{
+            margin-top: 50px;
+            width: 300px;
+            padding: 50px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table cellpadding="1" cellspacing="0" border="1">
+            <tr>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="x in data" >
+                <td>{{x.name}}</td>
+                <td>{{x.age}}</td>
+                <td>
+                    <button @click="del(x._id)">删除</button>
+                    <button @click="index(x._id)">修改</button>
+                </td>
+            </tr>
+        </table>
+        <div class="change" v-if="changeFlag">
+            <input type="text" v-model="changeName">姓名<br>
+            <input type="text" v-model="changeAge">年龄 <br>
+            <button @click="changeMongoDB(changeName,changeAge,chengeIndex)">修改</button>
+        </div>
+        <div class="add">
+            <h1>添加人员</h1>
+            <input type="text" v-model="addName">姓名
+            <input type="text" v-model="addAge">年龄 <br>
+            <button @click="addMongoDB(addName,addAge)">添加</button>
+        </div>
+        <div>
+            <input placeholder="请输入关键字" type="text" v-model="key">
+            <button>搜索</button>
+        </div>
+    </div>
+    <script >
+        new Vue({
+            el:"#app",
+            data:{
+                data:'',
+                addName:'',
+                addAge:'',
+                changeName:'',
+                changeAge:'',
+                chengeIndex:'',
+                changeFlag:false
+            },
+            methods:{
+                addMongoDB(a,b){
+                    axios.get(`http://127.0.0.1:3004/addMongoDB?name=${a}&age=${b}`)
+                        .then(res=>{
+                            console.log(res.data)
+                        })
+                    window.location.reload()
+                },
+                index(id){
+                    this.changeFlag=!this.changeFlag
+                    this.chengeIndex=id
+                    console.log(this.chengeIndex)
+                },
+                changeMongoDB(a,b,id){
+                    // console.log(id)
+                    axios.get(`http://127.0.0.1:3004/change?id=${id}&name=${a}&age=${b}`)
+                        .then(res=>{
+                            console.log(res.data)
+                        })
+                    window.location.reload()
+                    this.changeFlag=!this.changeFlag
+                },
+                del(id){
+                    axios.get(`http://127.0.0.1:3004/del?id=${id}`)
+                        .then(res=>{
+                            console.log(res.data)
+                        })
+                    window.location.reload()
+                }
+            },
+            mounted(){
+                axios.get("http://127.0.0.1:3004/student")
+                    .then(res=>{
+                        this.data=res.data
+                        console.log(res.data)
+                    })
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jsBase/vue.js"></script>
+    <script src="jsBase/axios.min.js"></script>
+    <script src="jsBase/jquery.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        ul{
+            width: 500px;
+        }
+        li{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+        }
+        img{
+            width: 200px;
+            height: 150px;
+        }
+        p{
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="x in data">
+                <img :src="x.photo" alt="">
+                <h1>
+                    {{x.title}}
+                    <p>{{x.content}}</p>
+                </h1>
+            </li>
+
+        </ul>
+    </div>
+
+
+    <script>
+        new Vue({
+            el:"#app",
+            data:{
+                data:''
+            },
+            created(){
+                axios.get("http://127.0.0.1:3002/newslist")
+                    .then(res=>{
+                        console.log(res.data)
+                        this.data=res.data
+                    })
+                // 'https://way.jd.com/jisuapi/query4?shouji=13456755448&appkey=b08c630c458f384c6ab4f91442555875'22  ////
+            }
+        })
+    </script>
+</body>
+</html>

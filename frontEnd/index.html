@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jsBase/vue.js"></script>
+    <script src="jsBase/axios.min.js"></script>
+    <style type="text/css">
+    	#app{
+    		width: 800px;
+    		height: 500px;
+    		position: relative;
+    	}
+    	.cover{
+    		width: 800px;
+    		height: 500px;
+    		position: absolute;
+    		top: 0;left: 0;
+    		background: rgba(0,0,0,0.7);
+    	}
+    	.cover>div{
+    		position: absolute;
+    		top: 200px;
+    		left: 200px;
+    		width: 200px;
+    		height: 100px;
+    		background: white;
+    	}
+    	.cover1{
+    		width: 800px;
+    		height: 500px;
+    		position: absolute;
+    		top: 0;left: 0;
+    		background: rgba(0,0,0,0.7);
+    	}
+    	.cover1>div{
+    		position: absolute;
+    		top: 200px;
+    		left: 200px;
+    		width: 200px;
+    		height: 100px;
+    		background: white;
+    	}
+    </style>
+</head>
+<body>
+    <div id="app">
+    	<button @click="addShow()">添加用户</button>
+        <input type="text"><button>搜索</button>
+        <table cellpadding="1" cellspacing="0" border="1">
+            <tr>
+                <th>id</th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>性别</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="x in data">
+            	<td>{{x.id}}</td>
+            	<td>{{x.name}}</td>
+            	<td>{{x.age}}</td>
+            	<td>{{x.sex}}</td>
+            	<td>
+            		<button @click="del(x.id)">删除</button>
+            		<button @click="changeShow(x.id)">修改</button>
+            	</td>
+            </tr>
+        </table>
+        <div class="cover" v-show="changeFlag">
+        	<div>
+	        	<input type="text" v-model="name" placeholder="请输入姓名"/><br />
+	        	<input type="text" v-model="age" placeholder="请输入年龄"/><br />
+	        	<input type="radio" name="sex" value="男" v-model="sex">男
+	        	<input type="radio" name="sex" value="女" v-model="sex">女<br />
+	        	<button @click="change(name,age,sex,id)">提交</button>
+	        	<button @click="changeShow">关闭</button>
+        	</div>
+        </div>
+        <div class="cover1" v-show="addFlag">
+        	<div>
+	        	<input type="text" v-model="name" placeholder="请输入姓名"/><br />
+	        	<input type="text" v-model="age" placeholder="请输入年龄"/><br />
+	        	<input type="radio" name="sex" value="男" v-model="sex">男
+	        	<input type="radio" name="sex" value="女" v-model="sex">女<br />
+	        	<button @click="add(name,age,sex,id)">确认添加</button>
+	        	<button @click="addShow()">关闭</button>
+        	</div>
+        </div>
+    </div>
+
+
+    <script>
+        new Vue({
+            el:"#app",
+            data:{
+                data:'',
+                name:'',
+                age:'',
+                sex:'',
+                id:'',
+                changeFlag:false,
+                addFlag:false
+            },
+            methods:{
+            	del(index){
+            		axios.get(`http://127.0.0.1:3001/del?id=${index}`)
+	                    .then(res=>{
+	                        window.location.reload();
+	                    })
+            	},
+            	change(a,b,c,d){
+            		axios.get(`http://127.0.0.1:3001/change?name=${a}&age=${b}&sex=${c}&id=${d}`)
+	                    .then(res=>{
+	                        console.log(res)
+	                        window.location.reload();
+	                    })
+            	},
+            	add(a,b,c){
+            		axios.get(`http://127.0.0.1:3001/add?name=${a}&age=${b}&sex=${c}`)
+	                    .then(res=>{
+	                        console.log(res)
+	                        window.location.reload();
+	                    })
+            	},
+            	changeShow(index){
+            		this.id=index
+            		this.changeFlag=!this.changeFlag
+            	},
+            	addShow(index){
+            		this.addFlag=!this.addFlag
+            	}
+            },
+            created(){
+                axios.get("http://127.0.0.1:3001/userlist")
+                    .then(res=>{
+                        this.data=res.data
+                    })
+            }
+        })
+    </script>
+</body>
+</html>
